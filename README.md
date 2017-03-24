@@ -10,7 +10,7 @@ Kinetictext is a React component that applies motion and styling to targeted tex
   * CSS Rich
 
 ### Learn more
-See the demo at [http://www.uismithing.com/main/kinetictext](http://www.uismithing.com/main/kinetictext).
+See the demo at [http://www.uismithing.com/main/wares/kinetictext](http://www.uismithing.com/main/wares/kinetictext).
 
 ### Repository
 [https://github.com/uismithing/react-kinetictext-effect](https://github.com/uismithing/react-kinetictext-effect)

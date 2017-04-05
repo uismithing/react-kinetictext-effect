@@ -5,12 +5,13 @@ import {Panel, Button} from "react-bootstrap";
 import Highlight from "react-syntax-highlight";
 import Kinetictext from "react-kinetictext-effect";
 //
-import {fetchKinetictextHtml} from "../actions/actions";
-import {fetchKinetictextPropsexampleJs} from "../actions/actions";
-import {fetchKinetictextMethodsexampleJs} from "../actions/actions";
-import {fetchKinetictextPropsDemoexampleJson} from "../actions/actions";
-import {fetchKinetictextCssDemoexampleCss} from "../actions/actions";
-import {fetchKinetictextDeployexampleHtml} from "../actions/actions";
+import {fetchKinetictextHtml} from "../actions/actions_kinetictext-landing";
+import {fetchKinetictextPropsexampleJs} from "../actions/actions_kinetictext-landing";
+import {fetchKinetictextMethodsexampleJs} from "../actions/actions_kinetictext-landing";
+import {fetchKinetictextPropsDemoexampleJson} from "../actions/actions_kinetictext-landing";
+import {fetchKinetictextCssDemoexampleCss} from "../actions/actions_kinetictext-landing";
+import {fetchKinetictextDeployexampleHtml} from "../actions/actions_kinetictext-landing";
+//
 import BackgroundCanvas from "../components/background-canvas";
 import {updateState} from "../toolbox/toolbox";
 import ReactGA from "react-ga";
@@ -24,10 +25,6 @@ class KinetictextLanding extends Component
 	constructor(props)
 	{
 	    super(props);
-	}
-	getChildContext()
-	{
-		// empty
 	}
 	getInitialState()
 	{
@@ -52,34 +49,28 @@ class KinetictextLanding extends Component
 			= this;
 		let kinetictextRef
 			= scopeProxy.refs.exampleheadingkinetictext;
-		let setViewLoaded
-			= scopeProxy.context.setViewLoaded;
-		let setLayoutMode
-			= scopeProxy.context.setLayoutMode;
-		let updateNavigationState
-			= scopeProxy.context.updateNavigationState;
 		let navigationSection
 			= 0;
 		//
 		window.requestAnimationFrame(()=>
 		{
-			// Updating the section index this way lets the
-			// state of the nagigation cluster fully initialize
-			// before the activeKey value is updated. This is
-			// necessary for it to be possible to navigate
-			// back to the wares section from within a component
-			// landing page when the component landing page is
-			// directly accessed via the url bar in the browser.
-			updateNavigationState(navigationSection);
+			let updateNavigationState
+				= scopeProxy.props.updateNavigationstateAction;
+			let setViewLoaded
+				= scopeProxy.props.setViewLoadedAction;
+			let setLayoutMode
+				= scopeProxy.props.setLayoutModeAction;
+			//
+			let setviewTimeout =
+				setTimeout(function()
+				{
+					setViewLoaded(true);
+					setLayoutMode("full");
+					updateNavigationState(navigationSection);
+				},
+				500);
+			//
 		});
-		let setviewTimeout =
-			setTimeout(function()
-			{
-				setViewLoaded(true);
-				setLayoutMode("full");
-			},
-			500);
-		//
 	}
 	componentWillUpdate()
 	{
@@ -87,10 +78,7 @@ class KinetictextLanding extends Component
 	}
 	componentDidUpdate()
 	{
-		window.requestAnimationFrame(function()
-		{
-			// empty
-		});
+		// empty
 	}
 	render()
 	{
@@ -601,34 +589,38 @@ class KinetictextLanding extends Component
 	//
 	static contextTypes =
 		{
-			"transitionBody":PropTypes.func,
-			"updateNavigationState":PropTypes.func,
-			"setViewLoaded":PropTypes.func,
-			"setLayoutMode":PropTypes.func
+			// empty
 		}
 	//
 }
-function mapAxiosstateToReactprops(axiosState)
+// Map Redux state items to this.props properties
+// each time the Redux state changes. When that
+// happens, the render() function is called
+// and the DOM is updated according to any
+// changes that happened in this.props. Use this
+// to retrieve values from the Redux state and
+// place them in this.props.
+function mapReduxstateToProps(reduxState)
 {
-	// This function is only called when the axios
-	// response updates the application state. Once
-	// this function is called, the component state
-	// is updated which causes the render() function
-	// to execute.
 	return(
 	{
-		// When the application state (state.posts.all) is
-		// updated by the axios promise, the promise response
-		// is assigned the component state this.content.posts.
-		"html":axiosState.content.html,
-		"kinetictextPropsexampleJs":axiosState.content.kinetictextPropsexampleJs,
-		"kinetictextMethodsexampleJs":axiosState.content.kinetictextMethodsexampleJs,
-		"kinetictextPropsDemoexampleJson":axiosState.content.kinetictextPropsDemoexampleJson,
-		"kinetictextCssDemoexampleCss":axiosState.content.kinetictextCssDemoexampleCss,
-		"kinetictextDeployexampleHtml":axiosState.content.kinetictextDeployexampleHtml
+		"html":reduxState.kinetictextReducer.html,
+		"kinetictextPropsexampleJs":reduxState.kinetictextReducer.kinetictextPropsexampleJs,
+		"kinetictextMethodsexampleJs":reduxState.kinetictextReducer.kinetictextMethodsexampleJs,
+		"kinetictextPropsDemoexampleJson":reduxState.kinetictextReducer.kinetictextPropsDemoexampleJson,
+		"kinetictextCssDemoexampleCss":reduxState.kinetictextReducer.kinetictextCssDemoexampleCss,
+		"kinetictextDeployexampleHtml":reduxState.kinetictextReducer.kinetictextDeployexampleHtml,
+		"setViewLoadedAction":reduxState.mainReducer.setViewloadedAction,
+		"setLayoutModeAction":reduxState.mainReducer.setLayoutmodeAction,
+		"updateNavigationstateAction":reduxState.navigationReducer.updateNavigationstateAction
 	});
 }
-export default connect(mapAxiosstateToReactprops,
+// Map Redux action-creators to this.props properties
+// when the component is initialized. This gives access
+// to each action-creator to the component from within
+// this.props so that actions can be dispatched. Use
+// this to initially establish values in the Redux state.
+export default connect(mapReduxstateToProps,
 {
 	"fetchKinetictextHtml":fetchKinetictextHtml,
 	"fetchKinetictextPropsexampleJs":fetchKinetictextPropsexampleJs,
